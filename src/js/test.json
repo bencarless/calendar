@@ -1,0 +1,14 @@
+{
+  "events": [
+    {
+      "date": "2018-03-03",
+      "name": "Coming event",
+      "description": "Test event"
+    },
+    {
+      "date": "2018-03-23",
+      "name": "Coming event",
+      "description": "Test event"
+    }
+  ]
+}

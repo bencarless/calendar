@@ -4509,6 +4509,7 @@ return hooks;
 },{}],2:[function(require,module,exports){
 // Script dependencies
 var moment = require("moment");
+var data = require("./test.json");
 
 // Get calendar element
 var elem = document.querySelectorAll('[data-calendar-name]')[0];
@@ -4516,7 +4517,7 @@ var parent = elem.parentElement;
 
 var current = new Date("2018-03-01");
 
-function renderCalendar(date) {
+function renderCalendar(date, data) {
   var currentMonth = new moment(date);
 
   // Work out details of month
@@ -4593,10 +4594,6 @@ function renderCalendar(date) {
   var totalDays = monthLength + ( 1 + startDayId ) + ( 6 - endDayId ); // Work out total days to iterate through
   firstDay.subtract(startDayId, 'day');
 
-  console.log(startDayId);
-  console.log(firstDay);
-  console.log(endDayId);
-
   var row = document.createElement('tr');
 
   for(i=0; i<totalDays; i++) {
@@ -4605,13 +4602,32 @@ function renderCalendar(date) {
       var row = document.createElement('tr');
     }
 
+    // Define and create day
     var day = document.createElement('td');
     day.height = cellHeight;
     day.width = cellWidth;
     day.style.fontSize = cellFontSize;
+
+    day.id = firstDay.format();
+
+    // Check if any events are present on this day
+    for(var key in data.events) {
+      var answer = moment(data.events[key].date).diff(firstDay);
+
+      // If event falls on this day
+      if(answer == 0) {
+        day.style.borderBottom = "5px solid red";
+        day.onclick = displayEvent;
+        day.style.cursor = "pointer";
+      }
+    }
     
     day.innerText = firstDay.date();
+
+    // Add day to row
     row.appendChild(day);
+
+    // Progress to next day
     firstDay.add(1, 'day');
 
     // If end of week append row
@@ -4636,7 +4652,7 @@ function nextCalendar() {
 
   current = moment(current).add(1, 'month');
 
-  renderCalendar(current);
+  renderCalendar(current, data);
 }
 
 function previousCalendar() {
@@ -4644,8 +4660,37 @@ function previousCalendar() {
 
   current = moment(current).subtract(1, 'month');
 
-  renderCalendar(current);
+  renderCalendar(current, data);
 }
 
-var calendar = renderCalendar(current);
-},{"moment":1}]},{},[2]);
+function displayEvent(event) {
+  var targetDate = moment(event.target.id);
+
+  for(var key in data.events) {
+    var answer = moment(data.events[key].date).diff(targetDate);
+
+    // If event falls on this day
+    if(answer == 0) {
+      console.log(data.events[key]);
+    }
+  }
+}
+
+// Render calendar on load
+renderCalendar(current, data);
+},{"./test.json":3,"moment":1}],3:[function(require,module,exports){
+module.exports={
+  "events": [
+    {
+      "date": "2018-03-03",
+      "name": "Coming event",
+      "description": "Test event"
+    },
+    {
+      "date": "2018-03-23",
+      "name": "Coming event",
+      "description": "Test event"
+    }
+  ]
+}
+},{}]},{},[2]);
