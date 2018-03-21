@@ -4514,16 +4514,23 @@ var moment = require("moment");
 var elem = document.querySelectorAll('[data-calendar-name]')[0];
 var parent = elem.parentElement;
 
-var current = "1994-03-01";
+var current = new Date("2018-03-01");
 
-function renderCalendar(date = new Date()) {
-  var currentMonth = moment(date);
-  
+function renderCalendar(date) {
+  var currentMonth = new moment(date);
+
   // Work out details of month
   var monthName = currentMonth.format('MMMM');
   var yearName = currentMonth.format('YYYY');
-  var startDayId = currentMonth.startOf('month').day();
-  var endDayId = currentMonth.endOf('month').day();
+
+  currentMonth.startOf('month');
+
+  var startDayId = currentMonth.day();
+  var firstDay = currentMonth.clone();
+
+  currentMonth.endOf('month');
+
+  var endDayId = currentMonth.day();
 
   // Work out specifics for current month
   var days = moment.weekdays();  // Get weekdays based on moment locale
@@ -4534,24 +4541,36 @@ function renderCalendar(date = new Date()) {
   calendar.id = "calendar";
 
   // Work out sizes
+  tableWidth = parent.clientWidth;
   cellWidth = parent.clientWidth / 7;
   cellHeight = parent.clientWidth / 7;
   headingFontSize = cellHeight / 2;
   cellFontSize = cellHeight / 3;
 
-  // Next and previous buttons
-
   // Add month heading
   var nameRow = document.createElement('tr');
+  
+  // Next and previous buttons
+  var back = document.createElement('th');
+  var next = document.createElement('th');
   var nameData = document.createElement('th');
 
-  nameData.colSpan = 7;
-  nameData.style.fontSize = headingFontSize;
-  nameData.innerText = monthName + " " + yearName;
-  nameData.style.cursor = "pointer";
-  nameData.onclick = nextCalendar;
+  back.innerText = "B";
+  back.style.cursor = "pointer";
+  back.onclick = previousCalendar;
 
+  next.innerText = "N";
+  next.style.cursor = "pointer";
+  next.onclick = nextCalendar;
+  
+  nameData.style.fontSize = headingFontSize;
+  nameData.colSpan = 5;
+  nameData.innerText = monthName + " " + yearName;
+
+  nameRow.appendChild(back);
   nameRow.appendChild(nameData);
+  nameRow.appendChild(next);
+
   calendar.appendChild(nameRow);
 
   // Create days as table header
@@ -4571,11 +4590,17 @@ function renderCalendar(date = new Date()) {
   calendar.appendChild(calendarDaysRow);
 
   // Write calendar rows
-  var totalDays = monthLength + startDayId + (7 - endDayId ); // Work out total days to iterate through
-  var firstDay = currentMonth.startOf('month').subtract(startDayId + 1, 'day');
+  var totalDays = monthLength + ( 1 + startDayId ) + ( 6 - endDayId ); // Work out total days to iterate through
+  firstDay.subtract(startDayId, 'day');
+
+  console.log(startDayId);
+  console.log(firstDay);
+  console.log(endDayId);
+
   var row = document.createElement('tr');
 
   for(i=0; i<totalDays; i++) {
+    // Check if day is start of week and if so create new row
     if(firstDay.day() == 0) {
       var row = document.createElement('tr');
     }
@@ -4585,9 +4610,11 @@ function renderCalendar(date = new Date()) {
     day.width = cellWidth;
     day.style.fontSize = cellFontSize;
     
-    day.innerText = firstDay.add(1, 'day').date();
+    day.innerText = firstDay.date();
     row.appendChild(day);
+    firstDay.add(1, 'day');
 
+    // If end of week append row
     if(firstDay.day() == 6) {
       calendar.appendChild(row);
     }
@@ -4608,6 +4635,14 @@ function nextCalendar() {
   clearCalendar();
 
   current = moment(current).add(1, 'month');
+
+  renderCalendar(current);
+}
+
+function previousCalendar() {
+  clearCalendar();
+
+  current = moment(current).subtract(1, 'month');
 
   renderCalendar(current);
 }
