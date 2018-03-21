@@ -1,0 +1,14 @@
+#test-container {
+  width: 240px;
+}
+#calendar {
+  /* font-family: 'Courier New', Courier, monospace; */
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+#calendar td {
+  border: 1px solid black;
+  margin: 0;
+}

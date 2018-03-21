@@ -1,0 +1,21 @@
+{
+  "name": "calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "chokidar-cli": "^1.2.0",
+    "moment": "^2.21.0",
+    "normalize.css": "^8.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.1.1",
+    "chokidar": "^2.0.2"
+  },
+  "scripts": {
+    "build": "browserify src/js/app.js > dist/bundle.js",
+    "watch": "node watch.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
