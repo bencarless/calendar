@@ -2,6 +2,11 @@
 var moment = require("moment");
 var data = require("./test.json");
 
+var color = {
+  primary: "red",
+  secondary: "blue"
+}
+
 // Get calendar element
 var elem = document.querySelectorAll('[data-calendar-name]')[0];
 var parent = elem.parentElement;
@@ -107,7 +112,8 @@ function renderCalendar(date, data) {
 
       // If event falls on this day
       if(answer == 0) {
-        day.style.borderBottom = "5px solid red";
+        day.style.borderBottom = "3px solid " + color.primary;
+        day.style.color = color.primary;
         day.onclick = displayEvent;
         day.style.cursor = "pointer";
       }
